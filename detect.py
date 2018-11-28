@@ -84,7 +84,7 @@ def detect_markers(img, camera_matrix, dist_coeff):
         markerLength = 100
         aruco_list = []
         ######################## INSERT CODE HERE ########################
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GR)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
         aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)
         parameters = aruco.DetectorParameters_create()
         corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters = parameters)
@@ -292,9 +292,9 @@ if __name__=="__main__":
         img = cv2.imread("..\\TestCases\\image_5.jpg")
         aruco_list = detect_markers(img, cam, dist)
         for i in aruco_list:
-                #img = drawAxis(img, aruco_list, i[0], cam, dist)
+                img = drawAxis(img, aruco_list, i[0], cam, dist)
                 #img = drawCube(img, aruco_list, i[0], cam, dist)
-                img = drawCylinder(img, aruco_list, i[0], cam, dist)
+                #img = drawCylinder(img, aruco_list, i[0], cam, dist)
         cv2.imshow("img", img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
