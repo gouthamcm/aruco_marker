@@ -134,21 +134,23 @@ def drawGLScene():
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         
         ar_list = []
+        
         ret, frame = cap.read()
+        
         if ret == True:
                 draw_background(frame)
                 glMatrixMode(GL_MODELVIEW)
                 glLoadIdentity()
                 ar_list = detect_markers(frame)
-##                for i in ar_list:
-##                        if i[0] == 8:
-##                                overlay(frame, ar_list, i[0],"texture_1.png")
-##                        if i[0] == 2:
-##                                overlay(frame, ar_list, i[0],"texture_2.png")
-##                        if i[0] == 7:
-##                                overlay(frame, ar_list, i[0],"texture_3.png")
-##                        if i[0] == 6:
-##                                overlay(frame, ar_list, i[0],"texture_4.png")
+                for i in ar_list:
+                        if i[0] == 8:
+                                overlay(frame, ar_list, i[0],"texture_1.png")
+                        if i[0] == 2:
+                                overlay(frame, ar_list, i[0],"texture_2.png")
+                        if i[0] == 7:
+                                overlay(frame, ar_list, i[0],"texture_3.png")
+                        if i[0] == 6:
+                                overlay(frame, ar_list, i[0],"texture_4.png")
                                 
                 cv2.imshow('frame', frame)
                 cv2.waitKey(1)
@@ -171,16 +173,32 @@ Purpose: This function takes the image in form of a numpy array, camera_matrix a
 def detect_markers(img):
         markerLength = 100
         aruco_list = []
+        
         ################################################################
         #################### Same code as Task 1.1 #####################
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GR)
         aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)
         parameters = aruco.DetectorParameters_create()
+        
+        
         corners, ids, _ = aruco.detectMarkers(gray, aruco_dict, parameters = parameters)
-        
-        getCameraMatrix()
-        rvev, tvec, _objPoints= aruco.estimatePoseSingleMarkers(corners, markerLength, camera_matrix, dist_coeff)
-        
+                
+        if(ids is not None):
+                
+                n=len(ids)
+                getCameraMatrix()
+                rvev, tvec, _objPoints= aruco.estimatePoseSingleMarkers(corners, markerLength, camera_matrix, dist_coeff)
+                center = (corners[0][0][0]+corners[0][0][1]+corners[0][0][2]+corners[0][0][3])/4
+
+                
+                print(ids)
+                print(center)
+                print(rvev)
+                print(tvec)
+                for i in range(n):
+                        
+                
+                        aruco_list.append([ids[i],center[i],rvev[i],tvec[i]])
 
       
        
@@ -235,53 +253,8 @@ def draw_background(image):
         
         
         return None
-'''def _draw_cube():
-        # draw cube
-        glBegin(GL_QUADS)
- 
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0,  0.0,  0.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  0.0,  0.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0,  0.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f( 0.0,  1.0,  0.0)
-  
-        glTexCoord2f(1.0, 0.0); glVertex3f( 0.0,  0.0, -1.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.0,  1.0, -1.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f( 1.0,  1.0, -1.0)
-        glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  0.0, -1.0)
- 
-        glTexCoord2f(0.0, 1.0); glVertex3f( 0.0,  1.0, -1.0)
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0,  1.0,  0.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  0.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0)
- 
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.0,  0.0, -1.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f( 1.0,  0.0, -1.0)
-        glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  0.0,  0.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f( 0.0,  0.0,  0.0)
- 
-        glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  0.0, -1.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f( 1.0,  1.0,  0.0)
-        glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  0.0,  0.0)
- 
-        glTexCoord2f(0.0, 0.0); glVertex3f( 0.0,  0.0, -1.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f( 0.0,  0.0,  0.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 0.0,  1.0,  0.0)
-        glTexCoord2f(0.0, 1.0); glVertex3f( 0.0,  1.0, -1.0)
- 
-        glEnd()'''
- 
-'''def _draw_background():
-        # draw background
-        glBegin(GL_QUADS)
-        glTexCoord2f(0.0, 1.0); glVertex3f(-4.0, -3.0, 0.0)
-        glTexCoord2f(1.0, 1.0); glVertex3f( 4.0, -3.0, 0.0)
-        glTexCoord2f(1.0, 0.0); glVertex3f( 4.0,  3.0, 0.0)
-        glTexCoord2f(0.0, 0.0); glVertex3f(-4.0,  3.0, 0.0)
-        glEnd( )
 
 
-'''
 """
 Function Name : init_object_texture()
 Input: Image file path
@@ -292,6 +265,24 @@ Purpose: Takes the filepath of a texture file as input and converts it into Open
 """
 def init_object_texture(image_filepath):
         tex = cv2.imread(image_filepath)
+        image = Image.open(image_filepath)
+        ix = image.size[0]
+        iy = image.size[1]
+        image = image.tobytes("raw", "RGBA", 0, -1)
+        glEnable(GL_TEXTURE_2D)
+        glEnable(GL_LIGHTING)
+        glEnable(GL_LIGHT0)
+        glEnable(GL_DEPTH_TEST)
+        texture_object = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture_object )
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        
+        
+        
         
         return None
 
@@ -307,21 +298,25 @@ Purpose: Receives the ArUco information as input and overlays the 3D Model of a 
          Parts of this code are already completed, you just need to fill in the blanks. You may
          however add your own code in this function.
 """
-'''def overlay(img, ar_list, ar_id, texture_file):
+def overlay(img, ar_list, ar_id, texture_file):
         for x in ar_list:
                 if ar_id == x[0]:
                         centre, rvec, tvec = x[1], x[2], x[3]
         rmtx = cv2.Rodrigues(rvec)[0]
-        view_matrix = 
+        view_matrix = np.array([[rmtx[0][0],rmtx[0][1],rmtx[0][2],-2],
+                                [rmtx[1][0],rmtx[1][1],rmtx[1][2],-2],
+                                [-rmtx[2][0],-rmtx[2][1],-rmtx[2][2],-2.5],
+                                [0.0       ,0.0       ,0.0       ,1.0    ]])
+        print(tvec.shape)
         view_matrix = view_matrix * INVERSE_MATRIX
         view_matrix = np.transpose(view_matrix)
-
-        
         init_object_texture(texture_file)
         glPushMatrix()
         glLoadMatrixd(view_matrix)
+        gluLookAt(0,0,5,0,0,0,0,1,0)
+        
         glutSolidTeapot(0.5)
-        glPopMatrix()'''
+        glPopMatrix()
 
 
 ########################################################################
